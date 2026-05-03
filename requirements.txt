@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pymongo
+python-dotenv
+jinja2
+python-multipart
+sshtunnel
+paramiko
+requests
+requests

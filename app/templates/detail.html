@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3 d-flex justify-content-between">
+    <a href="/" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>목록으로 돌아가기</a>
+    <a href="/edit/{{ student._id }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil-square me-1"></i>정보 수정하기</a>
+</div>
+
+<div class="row g-4">
+    <!-- 좌측 카드 (프로필 정보 및 사진) -->
+    <div class="col-lg-4 col-md-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center pt-5">
+                
+                <!-- 프로필 이미지 표시 영역 -->
+                <div class="mb-3">
+                    {% if student.profile_url %}
+                        <img src="{{ student.profile_url }}" alt="프로필 사진" class="rounded-circle img-thumbnail shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="display-1 text-primary"><i class="bi bi-person-circle"></i></div>
+                    {% endif %}
+                </div>
+
+                <!-- 프로필 이미지 업로드 폼 -->
+                <form action="/upload-profile/{{ student._id }}" method="post" enctype="multipart/form-data" class="mb-4">
+                    <div class="input-group input-group-sm w-100 mx-auto">
+                        <input type="file" name="profile_pic" class="form-control" accept="image/*" required>
+                        <button class="btn btn-outline-primary" type="submit">사진 등록</button>
+                    </div>
+                </form>
+                
+                <div class="mb-2">
+                    {% if student.role == '선생님' %}
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fs-6">{{ student.role }}</span>
+                    {% else %}
+                        <span class="badge bg-info text-dark px-3 py-2 rounded-pill fs-6">{{ student.role|default('학생') }}</span>
+                    {% endif %}
+                </div>
+                
+                <h3 class="fw-bold mb-1">{{ student.name }}</h3>
+                <p class="text-muted mb-4">{{ student.career }} 지망</p>
+                
+                <ul class="list-group list-group-flush text-start">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">동아리</span>
+                        <span class="fw-medium">{{ student.club }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">성격</span>
+                        <span class="fw-medium">{{ student.personality }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">친한 친구</span>
+                        <span class="fw-medium">{{ student.best_friend }}</span>
+                    </li>
+                </ul>
+                
+                <div class="mt-4">
+                    <form action="/delete/{{ student._id }}" method="post">
+                        <button class="btn btn-danger w-100"><i class="bi bi-trash me-2"></i>학생 데이터 삭제</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 우측 성적 분석 카드 -->
+    <div class="col-lg-8 col-md-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white pt-4 pb-0 border-bottom-0">
+                <h5 class="fw-bold"><i class="bi bi-graph-up text-primary me-2"></i>성적 분석</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center mb-4">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded">
+                            <div class="text-muted small mb-1">중간고사</div>
+                            <div class="fs-4 fw-bold text-primary">{{ student.grades.midterm }}점</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded">
+                            <div class="text-muted small mb-1">기말고사</div>
+                            <div class="fs-4 fw-bold text-success">{{ student.grades.final }}점</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position: relative; height:300px; width:100%">
+                    <canvas id="gradeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const ctx = document.getElementById('gradeChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['중간고사', '기말고사'],
+            datasets: [{
+                label: '성적',
+                data: [{{ student.grades.midterm }}, {{ student.grades.final }}],
+                backgroundColor: [
+                    'rgba(13, 110, 253, 0.5)',
+                    'rgba(25, 135, 84, 0.5)'
+                ],
+                borderColor: [
+                    'rgb(13, 110, 253)',
+                    'rgb(25, 135, 84)'
+                ],
+                borderWidth: 1,
+                borderRadius: 5,
+                barPercentage: 0.5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

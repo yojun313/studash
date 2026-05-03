@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="/" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>목록으로 돌아가기</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>학생 정보 수정</h5>
+            </div>
+            <div class="card-body">
+                <form action="/edit/{{ student._id }}" method="post" class="row g-3">
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label text-muted small">구분</label>
+                        <select name="role" class="form-select" required>
+                            <option value="학생" {% if student.role != '선생님' %}selected{% endif %}>학생</option>
+                            <option value="선생님" {% if student.role == '선생님' %}selected{% endif %}>선생님</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <label class="form-label text-muted small">이름</label>
+                        <input type="text" name="name" class="form-control" value="{{ student.name }}" required>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label text-muted small">중간고사</label>
+                        <input type="number" name="midterm" class="form-control" value="{{ student.grades.midterm }}" required>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label text-muted small">기말고사</label>
+                        <input type="number" name="final" class="form-control" value="{{ student.grades.final }}" required>
+                    </div>
+                    
+                    <div class="col-md-6 col-sm-12">
+                        <label class="form-label text-muted small">동아리</label>
+                        <input type="text" name="club" class="form-control" value="{{ student.club }}" required>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <label class="form-label text-muted small">친한 친구</label>
+                        <input type="text" name="best_friend" class="form-control" value="{{ student.best_friend }}">
+                    </div>
+
+                    <div class="col-md-6 col-sm-12">
+                        <label class="form-label text-muted small">성격</label>
+                        <input type="text" name="personality" class="form-control" value="{{ student.personality }}" required>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <label class="form-label text-muted small">진로</label>
+                        <input type="text" name="career" class="form-control" value="{{ student.career }}" required>
+                    </div>
+                    
+                    <div class="col-12 text-end mt-4">
+                        <a href="/student/{{ student._id }}" class="btn btn-light me-2">취소</a>
+                        <button type="submit" class="btn btn-primary px-4">수정 완료</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
